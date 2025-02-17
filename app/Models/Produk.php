@@ -69,7 +69,4 @@ class Produk extends Model
         $this->is_popular = $this->terjual >= 50; // Produk populer jika terjual >= 50
         $this->save();
     }
-
-
-
 }

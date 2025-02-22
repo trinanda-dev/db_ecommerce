@@ -50,4 +50,22 @@ class Pengguna extends Authenticatable
     {
         return $this->hasOne(AlamatToko::class, 'pengguna_id');
     }
+
+    // Relasi dengan model pesanan
+    public function pesanan()
+    {
+        return $this->hasMany(Pesanan::class);
+    }
+
+    // Relasi dengan alamat toko
+    public function alamatTokos()
+    {
+        return $this->hasMany(AlamatToko::class);
+    }
+
+    public function getAlamatUtamaAttribute()
+    {
+        return $this->alamatTokos()->where('is_utama', true)->first();
+    }
+
 }

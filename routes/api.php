@@ -9,6 +9,7 @@ use App\Http\Controllers\ItemKeranjangController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\KeranjangController;
 use App\Http\Controllers\PenggunaController;
+use App\Http\Controllers\PesananController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\WishlistController;
 use Illuminate\Http\Request;
@@ -81,3 +82,13 @@ Route::middleware('auth:sanctum')->group(function () {
 
 // Route yang digunakan untuk berinteraksi dengan discount banner
 Route::get('/discount-banner', [DiscountBannerController::class, 'index']);
+
+// Route yang digunakan untuk berinteraksi dengan pesanan
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/checkout', [PesananController::class, 'checkout']);
+    Route::put('/pesanan/{id}/validasi-ongkos-kirim', [PesananController::class, 'validasiOngkosKirim']);
+    Route::post('/pesanan/{id}/upload-bukti-transfer', [PesananController::class, 'uploadBuktiTransfer']);
+    Route::put('/pesanan/{id}/validasi-pembayaran', [PesananController::class, 'validasiPembayaran']);
+    Route::get('/pesanan/{id}', [PesananController::class, 'show']);
+    Route::get('/pesanan', [PesananController::class, 'index']);
+});

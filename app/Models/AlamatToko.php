@@ -20,6 +20,7 @@ class AlamatToko extends Model
         'id_kota',
         'provinsi',
         'id_provinsi',
+        'kecamatan',
         'kode_pos',
         'is_utama',
     ];
@@ -28,5 +29,11 @@ class AlamatToko extends Model
     public function pengguna()
     {
         return $this->belongsTo(Pengguna::class);
+    }
+
+    // Relasi dengan model pesanan
+    public function pesanan()
+    {
+        return $this->hasMany(Pesanan::class);
     }
 }

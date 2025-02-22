@@ -33,6 +33,7 @@ class AlamatTokoController extends Controller
             'id_kota' => 'required|integer',
             'provinsi' => 'required|string',
             'id_provinsi' => 'required|integer',
+            'kecamatan' => 'required|string',
             'kode_pos' => 'required|string',
             'is_utama' => 'required|boolean',
         ]);
@@ -49,6 +50,7 @@ class AlamatTokoController extends Controller
             'id_kota' => $request->id_kota,
             'provinsi' => $request->provinsi,
             'id_provinsi' => $request->id_provinsi,
+            'kecamatan' => $request->kecamatan,
             'kode_pos' => $request->kode_pos,
             'is_utama' => $request->is_utama,
         ]);
@@ -63,10 +65,20 @@ class AlamatTokoController extends Controller
     // Menghapus alamat toko
     public function destroy($id)
     {
-        $alamatToko = AlamatToko::findOrFail($id)
-            -> where('pengguna_id', Auth::id())
-            -> firstOrFail();
+        // Cari alamat toko yang dimiliki oleh pengguna yang sedang login
+        $alamatToko = AlamatToko::where('id', $id)
+            ->where('pengguna_id', Auth::id()) // Pastikan pengguna hanya bisa menghapus alamatnya sendiri
+            ->first();
 
+        // Jika alamat tidak ditemukan, kembalikan response error
+        if (!$alamatToko) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Alamat toko tidak ditemukan atau bukan milik Anda',
+            ], 404);
+        }
+
+        // Hapus alamat
         $alamatToko->delete();
 
         return response()->json([
@@ -96,5 +108,4 @@ class AlamatTokoController extends Controller
             'data' => $alamatToko,
         ]);
     }
-
 }

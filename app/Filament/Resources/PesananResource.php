@@ -18,6 +18,7 @@ class PesananResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
     protected static ?string $navigationLabel = 'Pesanan';
+    protected static ?int $navigationSort = 5;
 
     public static function form(Forms\Form $form): Forms\Form
     {
@@ -91,7 +92,15 @@ class PesananResource extends Resource
 
                 Action::make('Validasi Pembayaran')
                     ->visible(fn($record) => $record->status === 'Menunggu Pembayaran' && $record->bukti_transfer)
-                    ->action(fn($record) => $record->update(['status' => 'Berhasil']))
+                    ->action(function ($record) {
+                        $record->update(['status' => 'Berhasil']);
+
+                        // Pastikan ada status pengiriman, jika tidak buat baru
+                        $record->statusPengiriman()->updateOrCreate(
+                            ['pesanan_id' => $record->id], // Cek apakah status_pengiriman sudah ada
+                            ['status' => 'Diproses']
+                        );
+                    })
                     ->button()
                     ->color('success'),
 

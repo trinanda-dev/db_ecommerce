@@ -2,14 +2,19 @@
 
 namespace App\Models;
 
+use Illuminate\Contracts\Auth\CanResetPassword;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Auth\Passwords\CanResetPassword as ResetPasswordTrait;
 
-class Pengguna extends Authenticatable
+class Pengguna extends Authenticatable implements MustVerifyEmail, CanResetPassword
 {
-    use HasApiTokens, HasFactory;
+    use HasApiTokens, HasFactory, Notifiable, TwoFactorAuthenticatable, ResetPasswordTrait;
 
     // Nama tabel, opsional sesuai kovensi Laravel
     protected $table = 'penggunas';

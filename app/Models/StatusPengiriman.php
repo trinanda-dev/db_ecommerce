@@ -9,6 +9,9 @@ class StatusPengiriman extends Model
 {
     use HasFactory;
 
+    // Nama tabel
+    protected $table = 'status_pengiriman';
+
     protected $fillable = [
         'pesanan_id',
         'status',

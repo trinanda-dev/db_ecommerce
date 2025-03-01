@@ -171,15 +171,21 @@ class PesananController extends Controller
 
         // Update status pesanan yang belum dibayar lebih dari 24 jam menjadi "Kadaluarsa"
         Pesanan::where('pengguna_id', Auth::id())
-                ->where('status', 'Menunggu Pembayaran')
-                ->where('created_at', '<', $batasWaktu)
-                ->update(['status' => 'Kadaluarsa']);
+            ->where('status', 'Menunggu Pembayaran')
+            ->where('created_at', '<', $batasWaktu)
+            ->update(['status' => 'Kadaluarsa']);
 
         // Ambil hanya pesanan yang statusnya bukan "Kadaluarsa"
         $pesanan = Pesanan::where('pengguna_id', Auth::id())
-                ->whereNotIn('status', ['Kadaluarsa']) // Jangan tampilkan pesanan kadaluarsa
-                ->orderBy('created_at', 'desc')
-                ->get();
+            ->whereNotIn('status', ['Kadaluarsa'])
+            ->with([
+                'statusPengiriman' => function ($query) {
+                    $query->select('id', 'pesanan_id', 'status', 'catatan', 'tanggal_dikirim', 'nomor_resi', 'ekspedisi');
+                },
+                'items.produk'
+            ])
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         return response()->json([
             'success' => true,
@@ -190,12 +196,28 @@ class PesananController extends Controller
                     'alamat_id' => $item->alamat_id,
                     'total_harga' => $item->total_harga,
                     'ongkos_kirim' => $item->ongkos_kirim,
-                    'grand_total' => $item->grand_total, // Tambahkan ini
+                    'grand_total' => $item->grand_total,
                     'status' => $item->status,
                     'catatan' => $item->catatan,
-                    'bukti_transfer' => $item->bukti_transfer,
+                    'bukti_transfer' => $item->bukti_transfer ? asset('storage/' . $item->bukti_transfer) : null,
                     'created_at' => $item->created_at,
                     'updated_at' => $item->updated_at,
+                    'ekspedisi' => optional($item->statusPengiriman)->ekspedisi,
+                    'no_resi' => optional($item->statusPengiriman)->nomor_resi,
+                    'tanggal_dikirim' => optional($item->statusPengiriman)->tanggal_dikirim,
+                    'status_pengiriman' => optional($item->statusPengiriman)->status,
+                    'catatan_pengiriman' => optional($item->statusPengiriman)->catatan,
+                    'produk' => $item->items->map(function ($pesananItem) {
+                        return [
+                            'produk_id' => $pesananItem->produk->id ?? null,
+                            'nama_produk' => $pesananItem->produk->nama ?? null,
+                            'harga_produk' => $pesananItem->harga_saat_checkout ?? null,
+                            'jumlah' => $pesananItem->jumlah,
+                            'images' => collect($pesananItem->produk->images)->map(function ($image) {
+                                return asset('storage/' . $image);
+                            }),
+                        ];
+                    }),
                 ];
             }),
         ]);

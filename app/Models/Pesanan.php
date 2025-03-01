@@ -54,9 +54,36 @@ class Pesanan extends Model
         return $this->total_harga + ($this->ongkos_kirim ?? 0);
     }
 
+    public function getStatusAttribute($value)
+    {
+        return ucfirst($value); // Ubah jadi huruf besar di awal (opsional)
+    }
+
+    public function setStatusAttribute($value)
+    {
+        $this->attributes['status'] = strtolower($value); // Simpan dalam lowercase (opsional)
+    }
+
     // Relasi ke model pesanan item
     public function items()
     {
         return $this->hasMany(PesananItem::class);
+    }
+
+    // Method yang digunakan untuk melakukan perubahan status pengiriman
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::updated(function ($pesanan) {
+            // Jika status berubah menjadi "Berhasil", ubah status pengiriman menjadi "Diproses"
+            if ($pesanan->isDirty('status') && $pesanan->status === 'Berhasil') {
+                // Pastikan ada status pengiriman, jika tidak buat baru
+                $pesanan->statusPengiriman()->updateOrCreate(
+                    ['pesanan_id' => $pesanan->id],
+                    ['status' => 'Diproses']
+                );
+            }
+        });
     }
 }

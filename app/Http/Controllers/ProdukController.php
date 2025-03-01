@@ -10,27 +10,37 @@ class ProdukController extends Controller
     /**
      * Method yang digunakan untuk memanggil semua produk
      */
-    public function index()
+    public function index(Request $request)
     {
-        $produks = Produk::with(['kategori:id,nama', 'brand:id,nama',])
+        $search = $request->input('search');
+
+        $produks = Produk::with(['kategori:id,nama', 'brand:id,nama'])
             ->active()
-            ->available()
-            ->get();
+            ->available();
 
+        // 🔍 Jika ada query pencarian, lakukan filtering
+        if ($search) {
+            $produks->where(function ($query) use ($search) {
+                $query->where('nama', 'LIKE', "%$search%")
+                    ->orWhereHas('kategori', function ($query) use ($search) {
+                        $query->where('nama', 'LIKE', "%$search%");
+                    })
+                    ->orWhereHas('brand', function ($query) use ($search) {
+                        $query->where('nama', 'LIKE', "%$search%");
+                    });
+            });
+        }
+
+        $produks = $produks->get();
+
+        // 🔄 Ubah path gambar menjadi URL
         $produks->map(function ($produk) {
-            // Ubah semua path images menjadi URL penuh
             if (!empty($produk->images)) {
-                $produk->images = array_map(function ($image) {
-                    return asset('storage/' . $image);
-                }, $produk->images);
+                $produk->images = array_map(fn($image) => asset('storage/' . $image), $produk->images);
             } else {
-                $produk->images = [asset('storage/default.png')]; // Jika tidak ada gambar
+                $produk->images = [asset('storage/default.png')];
             }
-
-            // Tambahkan image_url dari gambar pertama
             $produk->image_url = $produk->images[0];
-
-            // Set is_popular berdasarkan jumlah terjual
             $produk->is_popular = $produk->terjual >= 50;
 
             return $produk;

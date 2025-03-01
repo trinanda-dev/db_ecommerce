@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AlamatTokoController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\DiscountBannerController;
@@ -92,3 +93,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/pesanan/{id}', [PesananController::class, 'show']);
     Route::get('/pesanan', [PesananController::class, 'index']);
 });
+
+// Route yang akan digunakan untuk melakukan forget password dan reset password
+Route::post('/forgot-password', [ResetPasswordController::class, 'sendResetLink'])->middleware('throttle:5,1');
+Route::post('/verify-reset-token', [ResetPasswordController::class, 'verifyResetToken']);
+Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword']);

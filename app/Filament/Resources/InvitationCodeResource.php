@@ -72,9 +72,6 @@ class InvitationCodeResource extends Resource
                         ->send();
                 }),
         ])
-        ->actions([
-            Tables\Actions\EditAction::make(),
-        ])
         ->bulkActions([]);
     }
 

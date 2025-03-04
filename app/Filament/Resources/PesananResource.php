@@ -20,6 +20,13 @@ class PesananResource extends Resource
     protected static ?string $navigationLabel = 'Pesanan';
     protected static ?int $navigationSort = 5;
 
+    // Tambahkan badge untuk menampilkan jumlah pesanan "Menunggu Validasi Admin"
+    public static function getNavigationBadge(): ?string
+    {
+        $jumlahPesanan = Pesanan::where('status', 'Menunggu Validasi Admin')->count();
+        return $jumlahPesanan > 0 ? (string) $jumlahPesanan:null;
+    }
+    
     public static function form(Forms\Form $form): Forms\Form
     {
         return $form

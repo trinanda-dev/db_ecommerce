@@ -22,7 +22,12 @@ class StatusPengirimanResource extends Resource
     protected static ?int $navigationSort = 6;
 
 
-
+    // Tambahkan badge untuk menampilkan status pesanan "Diproses"
+    public static function getNavigationBadge(): ?string
+    {
+        $jumlahStatusPengiriman = StatusPengiriman::where('status', "Diproses")->count();
+        return $jumlahStatusPengiriman > 0 ? (string) $jumlahStatusPengiriman:null;
+    }
     public static function form(Form $form): Form
     {
         return $form

@@ -30,6 +30,7 @@ class KategoriResource extends Resource
     protected static ?string $label = 'Kategori';
     protected static ?string $pluralLabel = 'Kategori';
     protected static ?int $navigationSort = 3;
+    protected static ?string $navigationGroup = 'Produk & Kategori';
 
     public static function form(Form $form): Form
     {

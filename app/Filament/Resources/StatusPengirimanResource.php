@@ -20,6 +20,8 @@ class StatusPengirimanResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-check-badge';
     protected static ?string $navigationLabel = 'Status Pengiriman';
     protected static ?int $navigationSort = 6;
+    protected static ?string $navigationGroup = 'Pesanan & Pengiriman';
+    protected static ?string $pluralLabel = 'Status Pengiriman';
 
 
     // Tambahkan badge untuk menampilkan status pesanan "Diproses"
@@ -151,5 +153,10 @@ class StatusPengirimanResource extends Resource
             'create' => Pages\CreateStatusPengiriman::route('/create'),
             'edit' => Pages\EditStatusPengiriman::route('/{record}/edit'),
         ];
+    }
+
+    public static function canCreate(): bool
+    {
+        return false;
     }
 }

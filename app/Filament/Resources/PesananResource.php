@@ -19,6 +19,8 @@ class PesananResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
     protected static ?string $navigationLabel = 'Pesanan';
     protected static ?int $navigationSort = 5;
+    protected static ?string $navigationGroup = 'Pesanan & Pengiriman';
+    protected static ?string $pluralLabel = 'Pesanan';
 
     // Tambahkan badge untuk menampilkan jumlah pesanan "Menunggu Validasi Admin"
     public static function getNavigationBadge(): ?string
@@ -26,7 +28,7 @@ class PesananResource extends Resource
         $jumlahPesanan = Pesanan::where('status', 'Menunggu Validasi Admin')->count();
         return $jumlahPesanan > 0 ? (string) $jumlahPesanan:null;
     }
-    
+
     public static function form(Forms\Form $form): Forms\Form
     {
         return $form
@@ -139,5 +141,10 @@ class PesananResource extends Resource
             'index' => Pages\ListPesanans::route('/'),
             'edit' => Pages\EditPesanan::route('/{record}/edit'),
         ];
+    }
+
+    public static function canCreate(): bool
+    {
+        return false;
     }
 }

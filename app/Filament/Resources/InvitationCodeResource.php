@@ -22,6 +22,8 @@ class InvitationCodeResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-user-plus';
     protected static ?string $navigationLabel = 'Kode Undangan';
     protected static ?int $navigationSort = 1;
+    protected static ?string $navigationGroup = 'Pengguna & Akses';
+    protected static ?string $pluralLabel = 'Kode Undangan';
 
     public static function form(Form $form): Form
     {
@@ -51,9 +53,10 @@ class InvitationCodeResource extends Resource
             Tables\Columns\ToggleColumn::make('is_used')
                 ->label('Digunakan'),
         ])
+        ->defaultSort('is_used')
         ->headerActions([
             Tables\Actions\Action::make('generateCode')
-                ->label('Generate Code')
+                ->label('Buat Kode Undangan')
                 ->icon('heroicon-o-plus')
                 ->action(function () {
                     do {
@@ -89,5 +92,10 @@ class InvitationCodeResource extends Resource
             'create' => Pages\CreateInvitationCode::route('/create'),
             'edit' => Pages\EditInvitationCode::route('/{record}/edit'),
         ];
+    }
+
+    public static function canCreate(): bool
+    {
+        return false;
     }
 }

@@ -10,6 +10,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -19,6 +20,9 @@ class PenggunaResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
     protected static ?string $navigationLabel = 'Pengguna';
+    protected static ?string $label = 'Pengguna';
+    protected static ?string $pluralLabel = 'Pengguna';
+    protected static ?string $navigationGroup = 'Pengguna & Akses';
 
 
     public static function form(Form $form): Form
@@ -72,6 +76,7 @@ class PenggunaResource extends Resource
                     ->dateTime()
                     ->sortable(),
                 Tables\Columns\IconColumn::make('is_active')
+                    ->label('Aktif')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -86,12 +91,7 @@ class PenggunaResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                Tables\Actions\DeleteAction::make(),
             ]);
     }
 
@@ -106,8 +106,11 @@ class PenggunaResource extends Resource
     {
         return [
             'index' => Pages\ListPenggunas::route('/'),
-            'create' => Pages\CreatePengguna::route('/create'),
-            'edit' => Pages\EditPengguna::route('/{record}/edit'),
         ];
+    }
+
+    public static function canCreate(): bool
+    {
+        return false;
     }
 }

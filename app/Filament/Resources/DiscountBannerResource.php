@@ -19,6 +19,8 @@ class DiscountBannerResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-receipt-percent';
     protected static ?int $navigationSort = 7;
+    protected static ?string $navigationGroup = 'Pemasaran & Promosi';
+    protected static ?string $pluralLabel = 'Diskon Banner';
 
     public static function form(Form $form): Form
     {
@@ -38,7 +40,8 @@ class DiscountBannerResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title')
-                    ->searchable(),
+                    ->searchable()
+                    ->label('Judul'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

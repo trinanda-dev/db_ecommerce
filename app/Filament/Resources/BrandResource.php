@@ -30,6 +30,7 @@ class BrandResource extends Resource
     protected static ?string $label = 'Brand';
     protected static ?string $pluralLabel = 'Brand';
     protected static ?int $navigationSort = 2;
+    protected static ?string $navigationGroup = 'Produk & Kategori';
 
     public static function form(Form $form): Form
     {
@@ -57,7 +58,7 @@ class BrandResource extends Resource
                         ->image()
                         ->directory('brands')
                         ->getUploadedFileNameForStorageUsing(fn ($file) => 'brands/' . $file->hashName()),
-                        
+
                     Toggle::make('is_active')
                         ->label('Aktif')
                         ->default(true)
@@ -89,7 +90,7 @@ class BrandResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
